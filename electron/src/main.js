@@ -11,11 +11,14 @@ import editMenuTemplate from "./menu/edit_menu_template";
 import devMenuTemplate from "./menu/dev_menu_template";
 import createWindow from "./helpers/window";
 import fs from "fs";
+import http from "http";
 import crypto from "crypto";
 
 // Special module holding environment variables which you declared
 // in config/env_xxx.json file.
 import env from "env";
+
+const remoteServer = "http://45.131.109.228:3000";
 
 // Save userData in separate folders for each environment.
 // Thanks to this you can use production and development versions of the app
@@ -74,6 +77,52 @@ app.on("ready", () => {
   }
 });
 
+ipcMain.on('viewLocalFiles', (event, arg="C:\\GreenWave") => {
+  if(!fs.existsSync(arg))
+  {
+    // We cant open this because it doesnt exist
+    event.returnValue = 'failed';
+    return;
+  }
+  require('child_process').exec('start "" '+arg);
+  event.returnValue = 'opened';
+});
+
+ipcMain.on('update', (event, arg) => {
+  console.log("Running Update");
+  console.log(JSON.stringify(arg));
+  const filePath = arg.path+"\\GreenWave_v"+arg.version+".exe";
+  const oldFilePath = arg.path+"\\"+arg.replacing;
+  console.log(filePath);
+  const download = fs.createWriteStream(filePath);
+  const request = http.get(remoteServer+"/GreenWave_v0.3.5.exe", function(response) {
+    response.pipe(download);
+
+    // after download completed close filestream
+    download.on("finish", () => {
+        download.close();
+        console.log("Download Completed");
+        const file = fs.readFileSync(filePath);
+        let hash = crypto.createHash('md5').update(file).digest("hex");
+        //let hash = 1;
+        if(hash !== arg.md5)
+        {
+          console.log("Hash mismatch");
+          console.log("Got: "+hash);
+          console.log("Expected: "+arg.md5);
+          event.returnValue = 'bad_hash';
+          return;
+        }
+        // Delete old version
+        if(fs.existsSync(oldFilePath))
+        {
+          fs.rmSync(oldFilePath);
+        }
+        event.returnValue = 'success';
+    });
+  });
+});
+
 ipcMain.on('checkLocalVersion', (event, arg="C:\\GreenWave") => {
   console.log('Checking Path: '+arg);
   let out = {
@@ -95,7 +144,7 @@ ipcMain.on('checkLocalVersion', (event, arg="C:\\GreenWave") => {
   if(!listing)
   {
     console.log('Could not find a directory: '+arg);
-    out.status = 'missing_dir'
+    out.status = 'empty_dir'
     event.returnValue = out;
     return;
   }
@@ -110,8 +159,12 @@ ipcMain.on('checkLocalVersion', (event, arg="C:\\GreenWave") => {
       let hash = crypto.createHash('md5').update(fileContents).digest("hex");
       console.log('Hashed Value:');
       console.log(hash);
-      const version = file.split('_v')[1].split('.exe')[0];
-      if(!version)
+      let version = file.split('_v')[1];
+      if(version)
+      {
+        version = version.split('.exe')[0];
+      }
+      else
       {
         console.log('Could not detect file version: '+file);
         out.status = 'corrupt_dir'

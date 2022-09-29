@@ -19,7 +19,8 @@
 
         <h3>Standalone</h3>
         <input type="text" id="standalone-path" value="C:\GreenWave"><br>
-        <button onclick="update()">UPDATE</button><br>
+        <button onclick="update()">UPDATE</button>
+        <button onclick="viewFile()">VIEW</button><br>
         
         <!-- <h3>VST3</h3>
         <input type="text" id="vst-path"><br>
@@ -36,6 +37,7 @@
     <script src="app.js"></script>
     <script>
       const {ipcRenderer} = require('electron');
+      const remoteServer = "http://45.131.109.228:3000";
       let state = {
         remote:{
           version: 'X.X.X',
@@ -61,7 +63,7 @@
           state.remote.md5 = responseJSON.md5;
           redrawRemoteVersion();
         }
-        xhttp.open("GET", "http://localhost:3000/currentVersion");
+        xhttp.open("GET", remoteServer+"/currentVersion");
         xhttp.send();
       }
       function redrawRemoteVersion()
@@ -76,9 +78,9 @@
         {
           alert('Created a new directory at: '+state.vstPath);
         }
-        if(state.local.status === 'missing_dir')
+        if(state.local.status === 'empty_dir')
         {
-          alert('Can not find a directory at: '+state.vstPath);
+          alert('Found an empty directory at: '+state.vstPath);
         }
         if(state.local.status === 'corrupt_dir')
         {
@@ -93,8 +95,29 @@
       function update()
       {
         //const test = ipcRenderer.sendSync('test', 'ping');
-        alert('NOT YET IMPLEMENTED');
+        //alert('NOT YET IMPLEMENTED');
+        const arg = {
+          path: state.standalonePath,
+          version: state.remote.version,
+          replacing: state.local.fileName,
+          md5: state.remote.md5
+        };
+        const download = ipcRenderer.sendSync('update', arg);
+        console.log('Download Message: '+download);
+        if(download === 'success')
+        {
+          alert('Updated!');
+        }
+        else if(download === 'bad_hash')
+        {
+          alert('The hash does not match. Do not use the downloaded file. Try again.');
+        }
+        else
+        {
+          alert('Something went wrong!');
+        }
         //console.log(test);
+        refresh();
       }
       function updatePaths()
       {
@@ -109,12 +132,16 @@
           state.motd = this.responseText;
           redrawMOTD();
         }
-        xhttp.open("GET", "http://localhost:3000/motd");
+        xhttp.open("GET", remoteServer+"/motd");
         xhttp.send();
       }
       function redrawMOTD()
       {
         document.getElementById("motd").innerHTML = state.motd;
+      }
+      function viewFile()
+      {
+        ipcRenderer.sendSync('viewLocalFiles', state.standalonePath);
       }
       function refresh(notification=false)
       {
