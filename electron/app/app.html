@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>REPLICLOUD</title>
+  </head>
+  <body>
+    <div id="app" class="container" style="display: none;">
+      <!-- <h1 id="greet"></h1> -->
+      <div class="header">
+        <span class="header-title">REPLICLOUD</span>
+        <div class="small motd" id="motd">
+          Loading message of the day...
+        </div>
+      </div>
+      
+      <p>
+        <h2>GreenWave</h2>
+
+        <h3>Standalone</h3>
+        <input type="text" id="standalone-path" value="C:\GreenWave"><br>
+        <button onclick="update()">UPDATE</button><br>
+        
+        <!-- <h3>VST3</h3>
+        <input type="text" id="vst-path"><br>
+        <button onclick="update()">UPDATE</button><br> -->
+        
+        <br>
+        <hr>
+        <button onclick="refresh(true)">REFRESH</button><br>
+        <div id="available-version">...</div>
+        <div id="local-version">...</div>
+      </p>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+      const {ipcRenderer} = require('electron');
+      let state = {
+        remote:{
+          version: 'X.X.X',
+          md5: '123',
+        },
+        local: 
+        {
+          version: 'X.X.X',
+          md5: '123',
+          fileName: 'fileName',
+          status: 'undefined'
+        },
+        vstPath: 'C:\\vstPath',
+        standalonePath: 'C:\\standalonePath'
+      };
+      function checkRemoteVersion()
+      {
+        const xhttp = new XMLHttpRequest();
+        xhttp.onload = function() {
+          // Should check status code
+          const responseJSON = JSON.parse(this.response);
+          state.remote.version = responseJSON.version;
+          state.remote.md5 = responseJSON.md5;
+          redrawRemoteVersion();
+        }
+        xhttp.open("GET", "http://localhost:3000/currentVersion");
+        xhttp.send();
+      }
+      function redrawRemoteVersion()
+      {
+        document.getElementById("available-version").innerHTML = 'Available: v'+state.remote.version + '<div class="small">['+state.remote.md5+']</div>';
+      }
+      function checkLocalVersion()
+      {
+        const localCheck = ipcRenderer.sendSync('checkLocalVersion', state.standalonePath);
+        state.local = localCheck;
+        if(state.local.status === 'new_dir')
+        {
+          alert('Created a new directory at: '+state.vstPath);
+        }
+        if(state.local.status === 'missing_dir')
+        {
+          alert('Can not find a directory at: '+state.vstPath);
+        }
+        if(state.local.status === 'corrupt_dir')
+        {
+          alert('Found the directory at: '+state.vstPath +' but unable to locate a GreenWave install.');
+        }
+        redrawLocalVersion();
+      }
+      function redrawLocalVersion()
+      {
+        document.getElementById("local-version").innerHTML = 'Installed: v'+state.local.version  + '<div class="small">['+state.local.md5+']</div>';
+      }
+      function update()
+      {
+        //const test = ipcRenderer.sendSync('test', 'ping');
+        alert('NOT YET IMPLEMENTED');
+        //console.log(test);
+      }
+      function updatePaths()
+      {
+        //state.vstPath = document.getElementById("vst-path").value;
+        state.standalonePath = document.getElementById("standalone-path").value;
+      }
+      function checkMOTD()
+      {
+        const xhttp = new XMLHttpRequest();
+        xhttp.onload = function() {
+          // Should check status code
+          state.motd = this.responseText;
+          redrawMOTD();
+        }
+        xhttp.open("GET", "http://localhost:3000/motd");
+        xhttp.send();
+      }
+      function redrawMOTD()
+      {
+        document.getElementById("motd").innerHTML = state.motd;
+      }
+      function refresh(notification=false)
+      {
+        console.log('Refresh!');
+        updatePaths();
+        checkRemoteVersion();
+        redrawRemoteVersion();
+        checkLocalVersion();
+        redrawLocalVersion();
+        checkMOTD();
+        console.log('Current State:');
+        console.log(JSON.stringify(state));
+        if(notification)
+        {
+          alert('Refreshed all data!');
+        }
+      }
+      refresh();
+      
+      
+    </script>
+  </body>
+</html>
