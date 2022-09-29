@@ -12,6 +12,7 @@
     "appId": "com.example.replicloud",
     "files": [
       "app/**/*",
+      "config.js",
       "node_modules/**/*",
       "package.json"
     ],
