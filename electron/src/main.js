@@ -17,6 +17,7 @@ import crypto from "crypto";
 // Special module holding environment variables which you declared
 // in config/env_xxx.json file.
 import env from "env";
+import { statOrNull } from "builder-util/out/fs";
 
 const remoteServer = "http://45.131.109.228:3000";
 
@@ -81,8 +82,9 @@ ipcMain.on('viewLocalFiles', (event, arg="C:\\GreenWave") => {
   if(!fs.existsSync(arg))
   {
     // We cant open this because it doesnt exist
-    event.returnValue = 'failed';
-    return;
+    //event.returnValue = 'failed';
+    //return;
+    fs.mkdirSync(arg);
   }
   require('child_process').exec('start "" '+arg);
   event.returnValue = 'opened';
@@ -91,18 +93,18 @@ ipcMain.on('viewLocalFiles', (event, arg="C:\\GreenWave") => {
 ipcMain.on('update', (event, arg) => {
   console.log("Running Update");
   console.log(JSON.stringify(arg));
-  const filePath = arg.path+"\\GreenWave_v"+arg.version+".exe";
-  const oldFilePath = arg.path+"\\"+arg.replacing;
-  console.log(filePath);
-  const download = fs.createWriteStream(filePath);
-  const request = http.get(remoteServer+"/GreenWave_v0.3.5.exe", function(response) {
+  const dlPath = arg.dlPath+"\\"+arg.file;
+  //const oldFilePath = arg.path+"\\"+arg.replacing;
+  console.log(dlPath);
+  const download = fs.createWriteStream(dlPath);
+  const request = http.get(remoteServer+"/"+arg.file, function(response) {
     response.pipe(download);
 
     // after download completed close filestream
     download.on("finish", () => {
         download.close();
         console.log("Download Completed");
-        const file = fs.readFileSync(filePath);
+        const file = fs.readFileSync(dlPath);
         let hash = crypto.createHash('md5').update(file).digest("hex");
         //let hash = 1;
         if(hash !== arg.md5)
@@ -114,74 +116,110 @@ ipcMain.on('update', (event, arg) => {
           return;
         }
         // Delete old version
-        if(fs.existsSync(oldFilePath))
-        {
-          fs.rmSync(oldFilePath);
-        }
+        // if(fs.existsSync(oldFilePath))
+        // {
+        //   if(oldFilePath !== filePath)
+        //   {
+        //     console.log('Deleting old file: '+oldFilePath);
+        //     fs.rmSync(oldFilePath);
+        //   }
+          
+        // }
         event.returnValue = 'success';
     });
   });
 });
 
-ipcMain.on('checkLocalVersion', (event, arg="C:\\GreenWave") => {
-  console.log('Checking Path: '+arg);
-  let out = {
-    fileName: 'undefined',
-    version: '?.?.?',
-    md5: 'undefined',
-    status: 'missing'
-  };
-  if(!fs.existsSync(arg))
+ipcMain.on('checkLocalVersion', (event, arg) => {
+  const vstPath = arg.path.vst;
+  const standalonePath = arg.path.standalone;
+  const products = arg.products;
+  console.log('Checking VST Path: '+vstPath);
+  if(!fs.existsSync(vstPath))
   {
-    console.log('Could not find a directory: '+arg);
-    console.log('Creating new directory at: '+arg);
-    fs.mkdirSync(arg);
-    out.status = 'new_dir'
-    event.returnValue = out;
-    return;
+    console.log('Could not find VST directory: '+vstPath);
+    console.log('Creating new VST directory at: '+vstPath);
+    fs.mkdirSync(vstPath);
   }
-  const listing = fs.readdirSync(arg);
-  if(!listing)
+  console.log('Checking Standalone Path: '+standalonePath);
+  if(!fs.existsSync(standalonePath))
   {
-    console.log('Could not find a directory: '+arg);
-    out.status = 'empty_dir'
-    event.returnValue = out;
-    return;
+    console.log('Could not find Standalone directory: '+standalonePath);
+    console.log('Creating new Standalone directory at: '+standalonePath);
+    fs.mkdirSync(standalonePath);
   }
-  for(let file of listing)
+  let out = {};
+  for(let product of Object.values(products))
   {
-    const ext = file.substring(file.length-4);
-    console.log('Checking file: '+ext);
-    if(ext === '.exe')
+    const category = product.category;
+    //const latestVersion = product.versions[product.latest];
+    let targetPath = '';
+    if(category === 'exe')
     {
-      // We found an EXE
-      const fileContents = fs.readFileSync(arg+'\\'+file);
-      let hash = crypto.createHash('md5').update(fileContents).digest("hex");
-      console.log('Hashed Value:');
-      console.log(hash);
-      let version = file.split('_v')[1];
-      if(version)
-      {
-        version = version.split('.exe')[0];
-      }
-      else
-      {
-        console.log('Could not detect file version: '+file);
-        out.status = 'corrupt_dir'
-        event.returnValue = out;
-        return;
-      }
-      console.log('Detected Local Version: '+version);
-      out.status = 'found';
-      out.version = version;
-      out.fileName = file;
-      out.md5 = hash;
-      event.returnValue = out;
-      return;
+      targetPath = standalonePath;
     }
+    if(category === 'vst')
+    {
+      targetPath = vstPath;
+    }
+    let foundVersions = [];
+    for(let version of Object.values(product.versions))
+    {
+      const fileName = version.file;
+      const fullPath = targetPath + '/' +fileName;
+      if(fs.existsSync(fullPath))
+      {
+        const file = fs.readFileSync(fullPath);
+        const hash = crypto.createHash('md5').update(file).digest("hex");
+        version.md5local = hash;
+        foundVersions.push(version);
+      }
+    }
+    out[product.id] = foundVersions;
   }
-  console.log('Could not find an installed version');
-  event.returnValue = '_missing_file';
+  event.returnValue = out;
+  // const listing = fs.readdirSync(arg);
+  // if(!listing)
+  // {
+  //   console.log('Could not find a directory: '+arg);
+  //   out.status = 'empty_dir'
+  //   event.returnValue = out;
+  //   return;
+  // }
+  // for(let file of listing)
+  // {
+  //   const ext = file.substring(file.length-4);
+  //   console.log('Checking file: '+ext);
+  //   if(ext === '.exe')
+  //   {
+  //     // We found an EXE
+  //     const fileContents = fs.readFileSync(arg+'\\'+file);
+  //     let hash = crypto.createHash('md5').update(fileContents).digest("hex");
+  //     console.log('Hashed Value:');
+  //     console.log(hash);
+  //     let version = file.split('_v')[1];
+  //     if(version)
+  //     {
+  //       version = version.split('.exe')[0];
+  //     }
+  //     else
+  //     {
+  //       console.log('Could not detect file version: '+file);
+  //       out.status = 'corrupt_dir'
+  //       event.returnValue = out;
+  //       return;
+  //     }
+  //     console.log('Detected Local Version: '+version);
+  //     out.status = 'found';
+  //     out.version = version;
+  //     out.fileName = file;
+  //     out.md5 = hash;
+  //     event.returnValue = out;
+  //     return;
+  //   }
+  // }
+  // console.log('Could not find an installed version');
+  // event.returnValue = '_missing_file';
 });
 
 app.on("window-all-closed", () => {

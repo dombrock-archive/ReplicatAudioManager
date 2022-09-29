@@ -2,7 +2,7 @@
   --bgSub:rgb(16, 16, 16);
   --bg:rgb(23, 23, 23);
   --bg2:rgb(33, 33, 33);
-  --main: rgb(176, 247, 255);
+  --main: rgb(165, 172, 162);
   --accent: rgb(252, 203, 155);
   --headerHeight: 10vh;
 }
@@ -16,7 +16,7 @@ body {
 }
 
 body {
-  display: flex;
+  /* display: flex; */
   justify-content: center;
   align-items: center;
   font-family: Tahoma,Verdana,Segoe,sans-serif; 
@@ -27,19 +27,21 @@ body {
 {
   background: var(--bg);
   padding: 1rem;
+  margin:0 auto;
+  max-width:650px;
+  margin-top:1rem;
   border-radius: 2vw;
-  margin-top:var(--headerHeight);
+  text-align: center;
 }
 .header
 {
-  position:fixed;
+  /* position:fixed;
   top:0;
-  left:0;
-  width:100vw;
+  left:0; */
   height: var(--headerHeight);
+  max-height:var(--headerHeight);;
   /* line-height: var(--headerHeight); */
   background:var(--bg2);
-  z-index: 999;
   text-align:left;
   padding-left: 1rem;
   padding-top:1.5rem;
@@ -47,6 +49,7 @@ body {
 .header-title
 {
   font-size:1.5rem;
+  font-weight: bold;
 }
 .motd{
   position:relative;
@@ -62,27 +65,71 @@ hr
 }
 input[type=text]
 {
-  width:80vw;
+  /* width:80vw; */
   max-width:600px;
-  background:var(--bg2);
+  background:var(--bg);
   color:var(--accent);
   outline: none;
   border:none;
-  padding:0.5rem;
+  padding:1rem;
+  border-radius: 1rem;
 }
 button{
-  background:var(--bg2);
+  background:var(--bg);
   color:var(--accent);
   outline: none;
   border:none;
-  padding:0.5rem;
+  padding:1rem;
   margin:0.5rem;
+  border-radius: 1rem;
 }
-.container {
+button:hover
+{
+  background:var(--bgSub);
+}
+
+.card{
   text-align: center;
+ margin-top:1rem;
+ background:var(--bg2); 
+ padding:1rem;
+ border-radius: 1rem;
+}
+.card-title{
+  font-size:1.5rem;
+  font-weight: bold;
+}
+.card-subtitle{
+  display:inline-block;
+  border-radius: 1rem;
+  background:var(--bg);
+  width:15vw;
+  min-width:15vw;
+  max-width:320px;
+  padding:1rem;
 }
 .small
 {
   font-size:0.75rem;
   opacity: 0.75;
+}
+/*SCROLLBAR*/
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: var(--bg2);
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: var(--main);
 }

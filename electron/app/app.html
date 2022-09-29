@@ -7,52 +7,149 @@
   <body>
     <div id="app" class="container" style="display: none;">
       <!-- <h1 id="greet"></h1> -->
-      <div class="header">
+      <div class="card">
         <span class="header-title">REPLICLOUD</span>
         <div class="small motd" id="motd">
           Loading message of the day...
         </div>
       </div>
-      
-      <p>
-        <h2>GreenWave</h2>
 
-        <h3>Standalone</h3>
-        <input type="text" id="standalone-path" value="C:\GreenWave"><br>
-        <button onclick="update()">UPDATE</button>
-        <button onclick="viewFile()">VIEW</button><br>
-        
-        <!-- <h3>VST3</h3>
-        <input type="text" id="vst-path"><br>
-        <button onclick="update()">UPDATE</button><br> -->
-        
-        <br>
-        <hr>
+      <div class="card">
         <button onclick="refresh(true)">REFRESH</button><br>
-        <div id="available-version">...</div>
-        <div id="local-version">...</div>
-      </p>
+      </div>
+      
+      <div class="card">
+        <h3>Install Locations:</h3>
+        <div class="card-subtitle">Standalone</div>
+        <input type="text" id="standalone-path" value="C:\GreenWave">
+        <button onclick="viewDirectory('standalone')">VIEW</button><br>
+        <div class="card-subtitle">VST3</div>
+        <input type="text" id="vst-path" value="C:\GreenWave">
+        <button onclick="viewDirectory('vst')">VIEW</button><br>
+      </div>
+
+      <!-- <div class="card">
+        <h2>GreenWave</h2>
+        <hr>
+
+        <div class="card-subtitle">Standalone</div>
+        <button onclick="update()">UPDATE</button>
+        <br>
+        <div id="available-version_gwSt">...</div>
+        <div id="local-version_gwSt">...</div>
+        <hr>
+
+        <div class="card-subtitle">VST3</div>
+        <button onclick="update()">UPDATE</button>
+        <br>
+        <div id="available-version_gwVST">...</div>
+      </div> -->
+
+      <div id="products-area">
+        products...
+      </div>
     </div>
 
     <script src="app.js"></script>
     <script>
       const {ipcRenderer} = require('electron');
-      const remoteServer = "http://45.131.109.228:3000";
+      const {serverURL} = require('./../config.js');
+      const axios = require('axios');
+      console.log('Connected to: '+serverURL);
       let state = {
+        products:{},
         remote:{
           version: 'X.X.X',
           md5: '123',
         },
         local: 
         {
-          version: 'X.X.X',
-          md5: '123',
-          fileName: 'fileName',
-          status: 'undefined'
+
         },
-        vstPath: 'C:\\vstPath',
-        standalonePath: 'C:\\standalonePath'
+        path: {
+          vst: 'C:\\ReplicatAudio\\vst',
+          standalone: 'C:\\ReplicatAudio\\standalone'
+        },
       };
+      async function checkProducts()
+      {
+        const response = await axios.get(serverURL+"/products");
+        //const responseJSON = JSON.parse(response);
+        state.products = response.data;
+        console.log(JSON.stringify(state.products,null,2));
+        redrawProducts();
+        // const xhttp = new XMLHttpRequest();
+        // xhttp.onload = function() {
+        //   // Should check status code
+        //   const responseJSON = JSON.parse(this.response);
+        //   state.products = responseJSON;
+        //   console.log(JSON.stringify(state.products));
+        //   redrawProducts();
+        // }
+        // xhttp.open("GET", serverURL+"/products");
+        // xhttp.send();
+      }
+      function redrawProducts()
+      {
+        let html = '';
+        const productsArea = document.getElementById('products-area');
+        for(let [productId, productData] of Object.entries(state.products))
+        {
+          const latestRemote = productData.versions[productData.latest];
+          const localProduct = state.local[productData.id]
+          let latestLocal = {
+                "version":"NA",
+                "id":-1,
+                "file":"NA",
+                "md5":"NA",
+                "md5local":"NA",
+                "path":"NA"
+          };
+          if(localProduct)
+          {
+            const localVersionsCount = localProduct.length;
+            if(localProduct.length)
+            {
+              latestLocal = localProduct[localVersionsCount-1];
+            }
+          }
+          let btnText = 'Reinstall';
+          if(latestLocal.md5 !== latestLocal.md5local)
+          {
+            btnText = 'Fix';
+          }
+          if(latestRemote.version !== latestLocal.version)
+          {
+            btnText = 'Update';
+          }
+          if(latestLocal.version === "NA")
+          {
+            btnText = 'Install';
+          }
+          html += '<div class="card">';
+          html += '<div class="card-title">';
+          html += productData.name;
+          html += '</div>';
+          html += '<div class="card-category">';
+          html += productData.category;
+          html += '</div>';
+          html += '<hr>';
+          html += '<button onclick="update(\''+productData.id+'\')">'+btnText+'</button><br>';
+          html += productData.description;
+          html += '<br>';
+          html += '<br>';
+          html += 'Available: v'+latestRemote.version;
+          html += '<div class="small">';
+          html += '['+latestRemote.md5+']';
+          html += '</div>';
+          html += 'Installed: v'+latestLocal.version;;
+          html += '<div class="small">';
+          html += '['+latestLocal.md5local+']';
+          html += '</div>';
+          html += '</div>';
+        }
+        productsArea.innerHTML = html;
+      }
       function checkRemoteVersion()
       {
         const xhttp = new XMLHttpRequest();
@@ -61,68 +158,67 @@
           const responseJSON = JSON.parse(this.response);
           state.remote.version = responseJSON.version;
           state.remote.md5 = responseJSON.md5;
-          redrawRemoteVersion();
+          //redrawRemoteVersion();
         }
-        xhttp.open("GET", remoteServer+"/currentVersion");
+        xhttp.open("GET", serverURL+"/currentVersion");
         xhttp.send();
       }
-      function redrawRemoteVersion()
-      {
-        document.getElementById("available-version").innerHTML = 'Available: v'+state.remote.version + '<div class="small">['+state.remote.md5+']</div>';
-      }
+      // function redrawRemoteVersion()
+      // {
+      //   document.getElementById("available-version_gwSt").innerHTML = 'Available: v'+state.remote.version + '<div class="small">['+state.remote.md5+']</div>';
+      // }
       function checkLocalVersion()
       {
-        const localCheck = ipcRenderer.sendSync('checkLocalVersion', state.standalonePath);
+        const localCheck = ipcRenderer.sendSync('checkLocalVersion', state);
         state.local = localCheck;
-        if(state.local.status === 'new_dir')
-        {
-          alert('Created a new directory at: '+state.vstPath);
-        }
-        if(state.local.status === 'empty_dir')
-        {
-          alert('Found an empty directory at: '+state.vstPath);
-        }
-        if(state.local.status === 'corrupt_dir')
-        {
-          alert('Found the directory at: '+state.vstPath +' but unable to locate a GreenWave install.');
-        }
-        redrawLocalVersion();
+        console.log('Local Versions:');
+        console.log(JSON.stringify(state.local, null, 2));
+        //redrawLocalVersion();
       }
-      function redrawLocalVersion()
+      // function redrawLocalVersion()
+      // {
+      //   //alert(JSON.stringify(state.local, null, 2));
+      //   //document.getElementById("local-version_gwSt").innerHTML = 'Installed: v'+state.local.version  + '<div class="small">['+state.local.md5+']</div>';
+      // }
+      function update(productId)
       {
-        document.getElementById("local-version").innerHTML = 'Installed: v'+state.local.version  + '<div class="small">['+state.local.md5+']</div>';
-      }
-      function update()
-      {
-        //const test = ipcRenderer.sendSync('test', 'ping');
-        //alert('NOT YET IMPLEMENTED');
+        console.log('UPDATING: '+productId);
+        const target = state.products[productId];
+        const targetLatest = target.versions[target.latest];
+        let dlPath;
+        if(target.category === 'exe')
+        {
+          dlPath = state.path.standalone;
+        }
+        if(target.category === 'vst')
+        {
+          dlPath = state.path.vst;
+        }
         const arg = {
-          path: state.standalonePath,
-          version: state.remote.version,
-          replacing: state.local.fileName,
-          md5: state.remote.md5
+          dlPath: dlPath,
+          file: targetLatest.file,
+          md5: targetLatest.md5
         };
+        alert('The update will start when you click OK. There is no progress bar at this time. You will be alerted when the update is complete.');
         const download = ipcRenderer.sendSync('update', arg);
         console.log('Download Message: '+download);
         if(download === 'success')
         {
-          alert('Updated!');
+          alert(target.name + ' updated to version '+targetLatest.version);
         }
-        else if(download === 'bad_hash')
+        if(download === 'bad_hash')
         {
-          alert('The hash does not match. Do not use the downloaded file. Try again.');
-        }
-        else
-        {
-          alert('Something went wrong!');
+          alert(target.name + ' has a bad hash. Do not use! Try again! ');
         }
         //console.log(test);
         refresh();
       }
       function updatePaths()
       {
-        //state.vstPath = document.getElementById("vst-path").value;
-        state.standalonePath = document.getElementById("standalone-path").value;
+        state.path.vst = document.getElementById("vst-path").value;
+        state.path.standalone = document.getElementById("standalone-path").value;
+        checkLocalVersion();
+        //redrawLocalVersion();
       }
       function checkMOTD()
       {
@@ -132,25 +228,34 @@
           state.motd = this.responseText;
           redrawMOTD();
         }
-        xhttp.open("GET", remoteServer+"/motd");
+        xhttp.open("GET", serverURL+"/motd");
         xhttp.send();
       }
       function redrawMOTD()
       {
         document.getElementById("motd").innerHTML = state.motd;
       }
-      function viewFile()
+      function viewDirectory(dir)
       {
-        ipcRenderer.sendSync('viewLocalFiles', state.standalonePath);
+        updatePaths();
+        if(dir === 'standalone')
+        {
+          ipcRenderer.sendSync('viewLocalFiles', state.path.standalone);
+        }
+        if(dir === 'vst')
+        {
+          ipcRenderer.sendSync('viewLocalFiles', state.path.vst);
+        }
       }
-      function refresh(notification=false)
+      async function refresh(notification=false)
       {
         console.log('Refresh!');
+        await checkProducts();
         updatePaths();
         checkRemoteVersion();
-        redrawRemoteVersion();
+        redrawProducts();
         checkLocalVersion();
-        redrawLocalVersion();
+        //redrawLocalVersion();
         checkMOTD();
         console.log('Current State:');
         console.log(JSON.stringify(state));

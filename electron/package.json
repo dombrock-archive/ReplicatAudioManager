@@ -32,6 +32,7 @@
     "release": "webpack --config=build/webpack.app.config.js --env=production && electron-builder"
   },
   "dependencies": {
+    "axios": "^0.27.2",
     "electron-dl": "^3.3.1",
     "fs-jetpack": "^4.1.0"
   },

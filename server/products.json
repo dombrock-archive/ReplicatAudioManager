@@ -1,0 +1,64 @@
+{
+    "com.replicat.greenwave_vst":{
+        "name": "GreenWave",
+        "description":"A software synth for Windows.",
+        "category": "vst",
+        "id": "com.replicat.greenwave_vst",
+        "latest":0,
+        "versions":[
+            {
+                "version":"0.3.5",
+                "id":1,
+                "file":"GreenWave_v0.3.5.vst3",
+                "md5":"7b5495f1e828ccd9f5eae44b6484b044",
+                "path":"GreenWave_v0.3.5.vst3"
+            },
+            {
+                "version":"0.3.4",
+                "id":1,
+                "file":"GreenWave_v0.3.4.vst",
+                "md5":"df9ffadfa2618e65322816818e3bbee0",
+                "path":"GreenWave_v0.3.4.vst"
+            }
+        ]
+    },
+    "com.replicat.greenwave_exe":{
+        "name": "GreenWave",
+        "description":"A software synth for Windows.",
+        "category": "exe",
+        "id": "com.replicat.greenwave_exe",
+        "latest":0,
+        "versions":[
+            {
+                "version":"0.3.5",
+                "id":1,
+                "file":"GreenWave_v0.3.5.exe",
+                "md5":"df9ffadfa2618e65322816818e3bbee0",
+                "path":"GreenWave_v0.3.5.exe"
+            },
+            {
+                "version":"0.3.4",
+                "id":1,
+                "file":"GreenWave_v0.3.4.exe",
+                "md5":"df9ffadfa2618e65322816818e3bbee0",
+                "path":"GreenWave_v0.3.4.exe"
+            }
+        ]
+    },
+    "com.replicat.example":{
+        "name": "ExampleVST",
+        "description":"An example software synth for Windows.",
+        "category": "vst",
+        "id": "com.replicat.example",
+        "latest":0,
+        "versions":[
+            {
+                "version":"0.3.5",
+                "id":1,
+                "file":"exampleVST.vst3",
+                "md5":"9902c960e541981be0c4768b5ea9a51a",
+                "path":"exampleVST.vst3"
+            }
+        ]
+    }
+}

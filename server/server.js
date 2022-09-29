@@ -2,6 +2,8 @@ const express = require('express');
 const app = express();
 const port = 3000;
 
+const products = require('./products.json');
+
 app.use(express.static('public'))
 
 app.get('/', (req, res) => {
@@ -20,6 +22,11 @@ app.get('/currentVersion', (req, res) => {
         md5: 'df9ffadfa2618e65322816818e3bbee0'
     }
     res.json(out);
+});
+
+app.get('/products', (req, res) => {
+    console.log('/products');
+    res.json(products);
 });
 
 app.listen(port, () => {
