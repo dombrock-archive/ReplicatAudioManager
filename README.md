@@ -2,6 +2,8 @@
 
 Replicloud is a tool for downloading and updating free and opensource audio tools.
 
+![screenshot](https://github.com/replicat-audio/Replicloud/blob/master/screenshot.png?raw=true)
+
 Features:
 * Downloads come directly from the Replicloud server and are verified for integrity.
 * No 3rd party installers or DRM. Replicloud downloads ready to go copies of your tools.
