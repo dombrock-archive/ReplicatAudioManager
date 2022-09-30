@@ -1,7 +1,7 @@
 const crypto = require('crypto')
 const fs = require('fs');
 let out = {};
-const path = __dirname+'/../public';
+const path = __dirname+'/../dist';
 for(let fileName of fs.readdirSync(path))
 {
     const file = fs.readFileSync(path+'/'+fileName);

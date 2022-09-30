@@ -113,6 +113,46 @@
             }
         ]
     },
+    "com.khrykin.blackbird_vst":{
+        "name": "BlackBird VST",
+        "developer": "KhRykin",
+        "description":"Simple, yet peculiar Synth!",
+        "icon":"placeholder-icon.png",
+        "screenshots":["blackbird-ss.png"],
+        "category": "vst",
+        "license": "GPL3",
+        "id": "com.khrykin.blackbird_vst",
+        "latest":0,
+        "versions":[
+            {
+                "version":"0.1.0",
+                "id":1,
+                "file":"BlackBird_v0.1.0.vst3",
+                "md5":"690db08631baa535037da95931eefea2",
+                "path":"BlackBird_v0.1.0.vst3"
+            }
+        ]
+    },
+    "com.khrykin.blackbird_exe":{
+        "name": "BlackBird Standalone",
+        "developer": "KhRykin",
+        "description":"Simple, yet peculiar Synth!",
+        "icon":"placeholder-icon.png",
+        "screenshots":["blackbird-ss.png"],
+        "category": "standalone",
+        "license": "GPL3",
+        "id": "com.khrykin.blackbird_exe",
+        "latest":0,
+        "versions":[
+            {
+                "version":"0.1.0",
+                "id":1,
+                "file":"BlackBird_v0.1.0.exe",
+                "md5":"1a7aa56926abbc0170df0add9fe67673",
+                "path":"BlackBird_v0.1.0.exe"
+            }
+        ]
+    },
     "com.replicat.example":{
         "name": "Example VST",
         "developer": "Replicat Audio",
