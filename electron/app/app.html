@@ -15,17 +15,17 @@
       </div>
 
       <div class="card">
-        <button onclick="refresh(true)">REFRESH</button><br>
+        <button onclick="refresh(true)">Refresh</button><br>
       </div>
       
       <div class="card">
         <h3>Install Locations:</h3>
         <div class="card-subtitle">Standalone</div>
-        <input type="text" id="standalone-path" value="C:\GreenWave">
-        <button onclick="viewDirectory('standalone')">VIEW</button><br>
+        <input type="text" id="standalone-path" value="C:\ReplicatAudio\standalone">
+        <button onclick="viewDirectory('standalone')">View</button><br>
         <div class="card-subtitle">VST3</div>
-        <input type="text" id="vst-path" value="C:\GreenWave">
-        <button onclick="viewDirectory('vst')">VIEW</button><br>
+        <input type="text" id="vst-path" value="C:\ReplicatAudio\vst">
+        <button onclick="viewDirectory('vst')">View</button><br>
       </div>
 
       <!-- <div class="card">
@@ -127,15 +127,28 @@
             btnText = 'Install';
           }
           html += '<div class="card">';
+          html += '<img class="product-icon" src="'+serverURL+'/icons/'+productData.icon+'">';
           html += '<div class="card-title">';
           html += productData.name;
           html += '</div>';
-          html += '<div class="card-category">';
-          html += productData.category;
+          html += '<div class="card-developer">';
+          html += productData.developer;
+          html += '</div>';
+          html += '<div class="card-meta">';
+          html += '<div class="card-tag">';
+          html += productData.category.toUpperCase();
+          html += '</div>';
+          html += '<br>';
+          html += '<div class="card-tag">';
+          html += productData.license.toUpperCase();
+          html += '</div>';
           html += '</div>';
           html += '<hr>';
-          html += '<button onclick="update(\''+productData.id+'\')">'+btnText+'</button><br>';
+          html += '<img class="product-ss" src="'+serverURL+'/screenshots/'+productData.screenshots[0]+'">';
+          html += '<br>';
           html += productData.description;
+          html += '<br>';
+          html += '<button onclick="update(\''+productData.id+'\')">'+btnText+'</button>';
           html += '<br>';
           html += '<br>';
           html += 'Available: v'+latestRemote.version;
@@ -186,7 +199,7 @@
         const target = state.products[productId];
         const targetLatest = target.versions[target.latest];
         let dlPath;
-        if(target.category === 'exe')
+        if(target.category === 'standalone')
         {
           dlPath = state.path.standalone;
         }

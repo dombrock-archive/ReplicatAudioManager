@@ -1,8 +1,12 @@
 {
     "com.replicat.greenwave_vst":{
-        "name": "GreenWave",
+        "name": "GreenWave VST",
+        "developer": "Replicat Audio",
         "description":"A software synth for Windows.",
+        "icon":"greenwave-icon.png",
+        "screenshots":["greenwave-ss.png"],
         "category": "vst",
+        "license": "©",
         "id": "com.replicat.greenwave_vst",
         "latest":0,
         "versions":[
@@ -23,9 +27,13 @@
         ]
     },
     "com.replicat.greenwave_exe":{
-        "name": "GreenWave",
+        "name": "GreenWave Standalone",
+        "developer": "Replicat Audio",
         "description":"A software synth for Windows.",
-        "category": "exe",
+        "icon":"greenwave-icon.png",
+        "screenshots":["greenwave-ss.png"],
+        "category": "standalone",
+        "license": "©",
         "id": "com.replicat.greenwave_exe",
         "latest":0,
         "versions":[
@@ -45,10 +53,74 @@
             }
         ]
     },
-    "com.replicat.example":{
-        "name": "ExampleVST",
-        "description":"An example software synth for Windows.",
+    "com.replicat.terminalvelocity_vst":{
+        "name": "TerminalVelocity",
+        "developer": "Replicat Audio",
+        "description":"A midi velocity control tool offering several modes of operation.",
+        "icon":"terminalvelocity-icon.png",
+        "screenshots":["terminalvelocity-ss.png"],
         "category": "vst",
+        "license": "GPL3",
+        "id": "com.replicat.terminalvelocity_vst",
+        "latest":0,
+        "versions":[
+            {
+                "version":"0.8.0",
+                "id":1,
+                "file":"TerminalVelocity_v0.8.0.vst3",
+                "md5":"cee9d27e7d80d0063785056c1e70a5c7",
+                "path":"exampleVST.vst3"
+            }
+        ]
+    },
+    "com.mytel.helm_vst":{
+        "name": "Helm VST",
+        "developer": "MyTel",
+        "description":"Helm is a free, cross-platform, polyphonic synthesizer.",
+        "icon":"helm-icon.png",
+        "screenshots":["helm-ss.png"],
+        "category": "vst",
+        "license": "GPL3",
+        "id": "com.mytel.helm_vst",
+        "latest":0,
+        "versions":[
+            {
+                "version":"0.9.0",
+                "id":1,
+                "file":"Helm_v0.9.0.dll",
+                "md5":"750b9da662e08d9758d29336f8302053",
+                "path":"Helm_v0.9.0.dll"
+            }
+        ]
+    },
+    "com.mytel.helm_exe":{
+        "name": "Helm Standalone",
+        "developer": "MyTel",
+        "description":"Helm is a free, cross-platform, polyphonic synthesizer.",
+        "icon":"helm-icon.png",
+        "screenshots":["helm-ss.png"],
+        "category": "standalone",
+        "license": "GPL3",
+        "id": "com.mytel.helm_exe",
+        "latest":0,
+        "versions":[
+            {
+                "version":"0.9.0",
+                "id":1,
+                "file":"Helm_v0.9.0.exe",
+                "md5":"e34c717d0df1748b96f643809da3da07",
+                "path":"Helm_v0.9.0.exe"
+            }
+        ]
+    },
+    "com.replicat.example":{
+        "name": "Example VST",
+        "developer": "Replicat Audio",
+        "description":"An example software synth for Windows. This will show a bad hash!",
+        "icon":"placeholder-icon.png",
+        "screenshots":["placeholder-ss.png"],
+        "category": "vst",
+        "license": "©",
         "id": "com.replicat.example",
         "latest":0,
         "versions":[

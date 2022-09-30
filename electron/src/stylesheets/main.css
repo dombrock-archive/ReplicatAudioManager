@@ -3,7 +3,7 @@
   --bg:rgb(23, 23, 23);
   --bg2:rgb(33, 33, 33);
   --main: rgb(165, 172, 162);
-  --accent: rgb(252, 203, 155);
+  --accent: rgb(181, 235, 255);
   --headerHeight: 10vh;
 }
 
@@ -94,6 +94,7 @@ button:hover
  background:var(--bg2); 
  padding:1rem;
  border-radius: 1rem;
+ position: relative;
 }
 .card-title{
   font-size:1.5rem;
@@ -108,10 +109,35 @@ button:hover
   max-width:320px;
   padding:1rem;
 }
+.card-meta
+{
+  position:absolute;
+  top:1rem;
+  right:1rem;
+  /* width: 100px; */
+  text-align: right;
+}
+.card-tag{
+  background:var(--bgSub);
+  color:var(--main);
+  border-radius: 1rem;
+  display:inline-block;
+  padding:0.5rem;
+}
 .small
 {
   font-size:0.75rem;
   opacity: 0.75;
+}
+.product-icon
+{
+  width:64px;
+  max-width:64px;
+}
+.product-ss
+{
+  width:80%;
+  max-width:80%;
 }
 /*SCROLLBAR*/
 /* width */

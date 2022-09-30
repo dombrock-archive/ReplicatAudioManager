@@ -18,7 +18,8 @@ import crypto from "crypto";
 // in config/env_xxx.json file.
 import env from "env";
 
-const remoteServer = "http://45.131.109.228:3000";
+import config from "./../config";
+const remoteServer = config.serverURL;
 
 // Save userData in separate folders for each environment.
 // Thanks to this you can use production and development versions of the app
@@ -83,7 +84,7 @@ ipcMain.on('viewLocalFiles', (event, arg="C:\\GreenWave") => {
     // We cant open this because it doesnt exist
     //event.returnValue = 'failed';
     //return;
-    fs.mkdirSync(arg);
+    fs.mkdirSync(arg, { recursive: true });
   }
   require('child_process').exec('start "" '+arg);
   event.returnValue = 'opened';
@@ -94,9 +95,11 @@ ipcMain.on('update', (event, arg) => {
   console.log(JSON.stringify(arg));
   const dlPath = arg.dlPath+"\\"+arg.file;
   //const oldFilePath = arg.path+"\\"+arg.replacing;
-  console.log(dlPath);
+  console.log('DL path: '+dlPath);
   const download = fs.createWriteStream(dlPath);
-  const request = http.get(remoteServer+"/"+arg.file, function(response) {
+  const reqPath = remoteServer+"/download?target="+arg.file;
+  console.log('Req path: '+reqPath);
+  const request = http.get(reqPath, function(response) {
     response.pipe(download);
 
     // after download completed close filestream
@@ -138,14 +141,14 @@ ipcMain.on('checkLocalVersion', (event, arg) => {
   {
     console.log('Could not find VST directory: '+vstPath);
     console.log('Creating new VST directory at: '+vstPath);
-    fs.mkdirSync(vstPath);
+    fs.mkdirSync(vstPath, { recursive: true });
   }
   console.log('Checking Standalone Path: '+standalonePath);
   if(!fs.existsSync(standalonePath))
   {
     console.log('Could not find Standalone directory: '+standalonePath);
     console.log('Creating new Standalone directory at: '+standalonePath);
-    fs.mkdirSync(standalonePath);
+    fs.mkdirSync(standalonePath, { recursive: true });
   }
   let out = {};
   for(let product of Object.values(products))
@@ -153,7 +156,7 @@ ipcMain.on('checkLocalVersion', (event, arg) => {
     const category = product.category;
     //const latestVersion = product.versions[product.latest];
     let targetPath = '';
-    if(category === 'exe')
+    if(category === 'standalone')
     {
       targetPath = standalonePath;
     }
@@ -171,6 +174,7 @@ ipcMain.on('checkLocalVersion', (event, arg) => {
         const file = fs.readFileSync(fullPath);
         const hash = crypto.createHash('md5').update(file).digest("hex");
         version.md5local = hash;
+        console.log('Found Local Product: '+fullPath);
         foundVersions.push(version);
       }
     }

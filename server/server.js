@@ -2,12 +2,30 @@ const express = require('express');
 const app = express();
 const port = 3000;
 
+const path = require('path');
+
 const products = require('./products.json');
 
-app.use(express.static('public'))
 
-app.get('/', (req, res) => {
-     res.send('Hello World!');
+app.use(express.static('public'));
+
+
+app.get('/download', (req, res) => {
+    console.log('/download');
+    const fs = require('fs');
+    const target = req.query.target;
+    const path =__dirname+'/dist/'+target;
+    console.log('Download Requested: '+target);
+    if(fs.existsSync(path))
+    {
+        console.log('Found target!');
+        res.sendFile(path);
+    }
+    else
+    {
+        console.log('Target can not be found!');
+        res.sendStatus(404);
+    }
 });
 
 app.get('/motd', (req, res) => {
