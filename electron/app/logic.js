@@ -1,6 +1,9 @@
 
 console.log('Connected to: '+serverURL);
-let state = {
+
+const ra = {};
+
+ra.state = {
     motd: {},
     products:{},
     remote:{
@@ -15,35 +18,90 @@ let state = {
         vst: 'C:\\ReplicatAudio\\vst',
         standalone: 'C:\\ReplicatAudio\\standalone'
     },
+    locked: false
 };
 
-function updateProduct(productId)
+ra.updateProduct = (productId) =>
 {
-    alert('Update product '+productId);
+    if(ra.state.locked)
+    {
+        ra.showModal('You can only download one product at a time!');
+        return;
+    }
+    ra.state.locked = true;
+    render.btnUpdateState(productId, false);
+    ipc.update(productId, ra.state);
 }
 
-function updatePaths()
+ra.finishProductUpdate = (res) =>
 {
-  state.path.vst = document.getElementById("vst-path").value;
-  state.path.standalone = document.getElementById("standalone-path").value;
-  ipc.checkLocalVersions();
+    const productId = res.originalArg.productId;
+    console.log('UPDATED: '+productId);
+    const target = ra.state.products[productId];
+    const targetLatest = target.versions[target.latest];
+    const msg = res.msg;
+    console.log('Download Message: '+msg);
+    if(msg === 'success')
+    {
+        ra.showModal(target.name + ' updated to version '+targetLatest.version, 'Update Complete');
+    }
+    if(msg === 'bad_hash')
+    {
+        ra.showModal(target.name + ' has a bad hash. Do not use! Try again! ', 'Update Error');
+    }
+    //render.btnUpdateState(productId, true);
+    ra.state.locked = false;
+    ra.refresh();
 }
 
-async function refresh(notification=false)
+ra.viewDirectory = (dir) =>
+{
+    ipc.viewDirectory(dir, ra.state);
+}
+
+ra.updatePaths = () =>
+{
+  ra.state.path.vst = document.getElementById("vst-path").value;
+  ra.state.path.standalone = document.getElementById("standalone-path").value;
+}
+
+ra.showModal = (text="Hello",title="Alert") =>
+{
+    console.log('Showing Modal');
+    document.getElementById('modal-title').innerHTML = title;
+    document.getElementById('modal-content').innerHTML = text;
+    document.getElementById('modal-shade').style.visibility = 'visible';
+    document.getElementById('modal').style.visibility = 'visible';
+}
+ra.closeModal = () =>
+{
+    document.getElementById('modal-content').innerHTML = '';
+    document.getElementById('modal-shade').style.visibility = 'hidden';
+    document.getElementById('modal').style.visibility = 'hidden';
+}
+
+ra.refresh = async (alert=false) =>
 {
   console.log('Refresh!');
-  state.motd = await request.motd();
-  state.products = await request.products();
-  updatePaths();
-  state.local = ipc.checkLocalVersions();
-  render.updateMOTD();
-  render.drawProducts();
-  //console.log('Current State:');
-  //console.log(JSON.stringify(state));
-  if(notification)
+  
+  render.btnRefreshState(false);
+
+  ra.state.motd = await request.motd();
+  ra.state.products = await request.products();
+
+  // Must check local versions after remote
+  // because we need to know which products to look for
+  ra.updatePaths();
+  ra.state.local = ipc.checkLocalVersions(ra.state);
+  
+  render.updateMOTD(ra.state);
+  render.drawProducts(ra.state);
+
+  render.btnRefreshState(true);
+  if(alert)
   {
-    alert('Refreshed all data!');
+    ra.showModal('All data has been refreshed!', 'Refreshed');
   }
 }
-refresh();
+ra.refresh();
 

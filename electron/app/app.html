@@ -5,6 +5,19 @@
     <title>REPLICLOUD</title>
   </head>
   <body>
+    <div id="modal-shade" class="modal-shade" onclick="ra.closeModal()">
+      
+    </div>
+    <div id="modal" class="modal">
+      <div id="modal-title" class="modal-title">
+        TITLE
+      </div>
+      <div id="modal-content" class="modal-content">
+        ...
+      </div>
+      <button onclick="ra.closeModal()">OK</button>
+      <br><br>
+    </div>
     <div id="app" class="container" style="display: none;">
       <div class="card">
         <span class="header-title">REPLICLOUD</span>
@@ -12,24 +25,36 @@
           Loading message of the day...
         </div>
       </div>
-
-      <div class="card">
-        <button onclick="refresh(true)">Refresh</button><br>
-      </div>
       
       <div class="card">
         <h3>Install Locations:</h3>
         <div class="card-subtitle">Standalone</div>
         <input type="text" id="standalone-path" value="C:\ReplicatAudio\standalone">
-        <button onclick="viewDirectory('standalone')">View</button><br>
+        <button onclick="ra.viewDirectory('standalone')">View</button><br>
         <div class="card-subtitle">VST3</div>
         <input type="text" id="vst-path" value="C:\ReplicatAudio\vst">
-        <button onclick="viewDirectory('vst')">View</button><br>
+        <button onclick="ra.viewDirectory('vst')">View</button><br>
+      </div>
+
+      <div class="card">
+        
+        <span class="header-title">PRODUCTS</span>
+        <br>
+        <button id="refresh" onclick="ra.refresh(true)">Refresh</button>
       </div>
 
       <div id="products-area">
-        products...
+        ⭮ Loading Products ⭮
       </div>
+
+      <div class="card">
+        <span class="small">
+          © ReplicatAudio,
+          <br>
+          Mathieu Dombrock 2022
+        </span>
+      </div>
+
     </div>
 
     <script src="app.js"></script>

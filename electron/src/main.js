@@ -99,6 +99,10 @@ ipcMain.on('update', (event, arg) => {
   const download = fs.createWriteStream(dlPath);
   const reqPath = remoteServer+"/download?target="+arg.file;
   console.log('Req path: '+reqPath);
+  let out = {
+    msg: '',
+    originalArg: arg
+  };
   const request = http.get(reqPath, function(response) {
     response.pipe(download);
 
@@ -114,7 +118,8 @@ ipcMain.on('update', (event, arg) => {
           console.log("Hash mismatch");
           console.log("Got: "+hash);
           console.log("Expected: "+arg.md5);
-          event.returnValue = 'bad_hash';
+          out.msg= 'bad_hash';
+          event.sender.send('product-updated',out);
           return;
         }
         // Delete old version
@@ -127,7 +132,9 @@ ipcMain.on('update', (event, arg) => {
         //   }
           
         // }
-        event.returnValue = 'success';
+        console.log('Download Success');
+        out.msg = 'success';
+        event.sender.send('product-updated',out);
     });
   });
 });
@@ -154,7 +161,6 @@ ipcMain.on('checkLocalVersion', (event, arg) => {
   for(let product of Object.values(products))
   {
     const category = product.category;
-    //const latestVersion = product.versions[product.latest];
     let targetPath = '';
     if(category === 'standalone')
     {
@@ -181,48 +187,6 @@ ipcMain.on('checkLocalVersion', (event, arg) => {
     out[product.id] = foundVersions;
   }
   event.returnValue = out;
-  // const listing = fs.readdirSync(arg);
-  // if(!listing)
-  // {
-  //   console.log('Could not find a directory: '+arg);
-  //   out.status = 'empty_dir'
-  //   event.returnValue = out;
-  //   return;
-  // }
-  // for(let file of listing)
-  // {
-  //   const ext = file.substring(file.length-4);
-  //   console.log('Checking file: '+ext);
-  //   if(ext === '.exe')
-  //   {
-  //     // We found an EXE
-  //     const fileContents = fs.readFileSync(arg+'\\'+file);
-  //     let hash = crypto.createHash('md5').update(fileContents).digest("hex");
-  //     console.log('Hashed Value:');
-  //     console.log(hash);
-  //     let version = file.split('_v')[1];
-  //     if(version)
-  //     {
-  //       version = version.split('.exe')[0];
-  //     }
-  //     else
-  //     {
-  //       console.log('Could not detect file version: '+file);
-  //       out.status = 'corrupt_dir'
-  //       event.returnValue = out;
-  //       return;
-  //     }
-  //     console.log('Detected Local Version: '+version);
-  //     out.status = 'found';
-  //     out.version = version;
-  //     out.fileName = file;
-  //     out.md5 = hash;
-  //     event.returnValue = out;
-  //     return;
-  //   }
-  // }
-  // console.log('Could not find an installed version');
-  // event.returnValue = '_missing_file';
 });
 
 app.on("window-all-closed", () => {

@@ -1,6 +1,6 @@
 let render = {};
 
-render.drawProducts = ()=>
+render.drawProducts = (state)=>
 {
   let html = '';
   const productsArea = document.getElementById('products-area');
@@ -58,8 +58,8 @@ render.drawProducts = ()=>
     html += '<img class="product-ss" src="'+serverURL+'/screenshots/'+productData.screenshots[0]+'">';
     html += '<br>';
     html += productData.description;
-    html += '<br>';
-    html += '<button onclick="updateProduct(\''+productData.id+'\')">'+btnText+'</button>';
+    html += '<br><br>';
+    html += '<button id="update-'+productData.id+'" onclick="ra.updateProduct(\''+productData.id+'\')">'+btnText+'</button>';
     html += '<br>';
     html += '<br>';
     html += 'Available: v'+latestRemote.version;
@@ -75,7 +75,38 @@ render.drawProducts = ()=>
   productsArea.innerHTML = html;
 }
 
-render.updateMOTD = ()=>
+render.updateMOTD = (state)=>
 {
-    document.getElementById("motd").innerHTML = state.motd;
+  document.getElementById("motd").innerHTML = state.motd;
+}
+
+render.btnRefreshState = (available = true)=>
+{
+  const btn = document.getElementById("refresh");
+  if(available)
+  {
+    btn.innerHTML = 'Refresh';
+    btn.classList.remove('btn-disabled');
+  }
+  else
+  {
+    btn.innerHTML = '...';
+    btn.classList.add('btn-disabled');
+  }
+}
+
+render.btnUpdateState = (productId, available = true)=>
+{
+  console.log('Btn update state '+productId)
+  const btn = document.getElementById("update-"+productId);
+  if(available)
+  {
+    btn.innerHTML = 'Update';
+    btn.classList.remove('btn-disabled');
+  }
+  else
+  {
+    btn.innerHTML = 'Downloading';
+    btn.classList.add('btn-disabled');
+  }
 }
