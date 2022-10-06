@@ -6,7 +6,6 @@
   </head>
   <body>
     <div id="app" class="container" style="display: none;">
-      <!-- <h1 id="greet"></h1> -->
       <div class="card">
         <span class="header-title">REPLICLOUD</span>
         <div class="small motd" id="motd">
@@ -28,29 +27,16 @@
         <button onclick="viewDirectory('vst')">View</button><br>
       </div>
 
-      <!-- <div class="card">
-        <h2>GreenWave</h2>
-        <hr>
-
-        <div class="card-subtitle">Standalone</div>
-        <button onclick="update()">UPDATE</button>
-        <br>
-        <div id="available-version_gwSt">...</div>
-        <div id="local-version_gwSt">...</div>
-        <hr>
-
-        <div class="card-subtitle">VST3</div>
-        <button onclick="update()">UPDATE</button>
-        <br>
-        <div id="available-version_gwVST">...</div>
-      </div> -->
-
       <div id="products-area">
         products...
       </div>
     </div>
 
     <script src="app.js"></script>
+    <script src="serverURL.js"></script>
+    <script src="ipc.js"></script>
+    <script src="request.js"></script>
+    <script src="render.js"></script>
     <script src="logic.js"></script>
   </body>
 </html>
