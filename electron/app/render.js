@@ -75,6 +75,37 @@ render.drawProducts = (state)=>
   productsArea.innerHTML = html;
 }
 
+render.drawCategories = (state) =>
+{
+  let html = '';
+  //state.categories.push('all');
+  for (const category of state.categories)
+  {
+    html += '<div class="category-item" id="category-'+category+'" onclick="ra.selectCategory(\''+category+'\')">'+category.toUpperCase()+'</div>';
+  } 
+  document.getElementById("categories").innerHTML = html;
+}
+
+render.updateCategories = (state) =>
+{
+  for(const category  of state.categories)
+  {
+    if(state.filter.categories.includes(category))
+    {
+      document.getElementById('category-'+category).classList.add('category-on');
+    }
+    else{
+      document.getElementById('category-'+category).classList.remove('category-on');
+    }
+  }
+}
+
+render.updateServerURL = (state)=>
+{
+  console.log('USURL');
+  document.getElementById("serverURL").innerHTML = serverURL;
+}
+
 render.updateMOTD = (state)=>
 {
   document.getElementById("motd").innerHTML = state.motd;

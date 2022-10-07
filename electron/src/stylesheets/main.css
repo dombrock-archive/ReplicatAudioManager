@@ -104,6 +104,30 @@ button:hover
 {
   background:var(--bg2);
 }
+.category-item
+{
+  display:inline-block;
+  border-radius: 1rem;
+  background:var(--bgSub);
+  width:8rem;
+  min-width:8rem;
+  max-width:420px;
+  overflow-x: hidden;
+  padding:0.5rem;
+  margin:0.5rem;
+  cursor: pointer;
+}
+.category-item:hover{
+  background:var(--bg)
+}
+.category-on{
+  background:var(--accentDark);
+  color:var(--bg2);
+}
+.category-on:hover
+{
+  background:var(--accent);
+}
 
 .card{
   text-align: center;
@@ -172,14 +196,15 @@ button:hover
 .modal{
   visibility: hidden;
   position:fixed;
-  left:10vw;
+  left:calc((100vw - 650px) / 2);
   top:10vw;
-  right:10vw;
+  right:0;
   z-index: 999;
   text-align: center;
   background:var(--bg);
   color:var(--main);
   border-radius:0.25rem;
+  max-width:650px;
 }
 .modal-title{
   font-size:2rem;

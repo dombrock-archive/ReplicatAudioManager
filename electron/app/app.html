@@ -25,6 +25,13 @@
           Loading message of the day...
         </div>
       </div>
+
+      <div class="card">
+        <span class="header-title">CONNECTION</span>
+        <br>
+        <div id="serverURL" class="small">...</div>
+        <button id="refresh" onclick="ra.refresh(true)">Refresh</button>
+      </div>
       
       <div class="card">
         <h3>Install Locations:</h3>
@@ -37,10 +44,9 @@
       </div>
 
       <div class="card">
-        
-        <span class="header-title">PRODUCTS</span>
+        <span class="header-title">CATEGORIES</span>
         <br>
-        <button id="refresh" onclick="ra.refresh(true)">Refresh</button>
+        <div class="categories" id="categories">...</div>
       </div>
 
       <div id="products-area">

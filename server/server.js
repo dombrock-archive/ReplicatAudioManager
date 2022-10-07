@@ -44,6 +44,24 @@ app.get('/currentVersion', (req, res) => {
 
 app.get('/products', (req, res) => {
     console.log('/products');
+    // const category = req.query.category;
+    // const categoryJSON = JSON.parse(category);
+    // if(!categoryJSON)
+    // {
+    //     console.log('Cant parse category JSON');
+    //     console.log(category);
+    //     return;
+    // }
+
+    // let out = {};
+    // for (const [productId, data] of Object.entries(products))
+    // {
+    //     if(data.category == 'standalone')
+    //     {
+    //         out[productId] = data;
+    //     }
+    // }
+    // res.json(out);
     res.json(products);
 });
 

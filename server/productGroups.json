@@ -1,0 +1,47 @@
+{
+    "com.replicat.greenwave":{
+        "name": "GreenWave",
+        "developer": "Replicat Audio",
+        "description":"A software synth for Windows.",
+        "icon":"greenwave-icon.png",
+        "screenshots":["greenwave-ss.png"],
+        "formats": ["vst3", "exe"],
+        "category": "synth",
+        "license": "©",
+        "id": "com.replicat.greenwave",
+        "latest":0,
+        "versions":{
+            "vst3":[
+                {
+                    "version":"0.3.5",
+                    "id":1,
+                    "file":"GreenWave_v0.3.5.vst3",
+                    "md5":"7b5495f1e828ccd9f5eae44b6484b044",
+                    "path":"GreenWave_v0.3.5.vst3"
+                },
+                {
+                    "version":"0.3.4",
+                    "id":1,
+                    "file":"GreenWave_v0.3.4.vst",
+                    "md5":"df9ffadfa2618e65322816818e3bbee0",
+                    "path":"GreenWave_v0.3.4.vst"
+                }
+            ],
+            "exe":[
+                {
+                    "version":"0.3.5",
+                    "id":1,
+                    "file":"GreenWave_v0.3.5.exe",
+                    "md5":"df9ffadfa2618e65322816818e3bbee0",
+                    "path":"GreenWave_v0.3.5.exe"
+                },
+                {
+                    "version":"0.3.4",
+                    "id":1,
+                    "file":"GreenWave_v0.3.4.exe",
+                    "md5":"df9ffadfa2618e65322816818e3bbee0",
+                }
+            ]
+        }
+    }
+}

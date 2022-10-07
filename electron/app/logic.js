@@ -6,6 +6,7 @@ const ra = {};
 ra.state = {
     motd: {},
     products:{},
+    productsFull:{},
     remote:{
         version: 'X.X.X',
         md5: '123',
@@ -17,6 +18,10 @@ ra.state = {
     path: {
         vst: 'C:\\ReplicatAudio\\vst',
         standalone: 'C:\\ReplicatAudio\\standalone'
+    },
+    categories: [],
+    filter: {
+        categories: ['vst','standalone']
     },
     locked: false
 };
@@ -65,6 +70,71 @@ ra.updatePaths = () =>
   ra.state.path.standalone = document.getElementById("standalone-path").value;
 }
 
+ra.buildCategories = () =>
+{
+    for(const product of Object.values(ra.state.productsFull))
+    {
+        if(ra.state.categories.includes(product.category) === false)
+        {
+            ra.state.categories.push(product.category);
+        }
+    }
+    ra.state.filter.categories = [...ra.state.categories];
+}
+
+ra.filterProducts = () =>
+{
+    console.log('Filter Products');
+    console.log(ra.state.filter.categories);
+    let out = {};
+    const categories = ra.state.filter.categories;
+    if(categories.includes('all'))
+    {
+        ra.state.products = {...ra.state.productsFull};
+        return;
+    }
+    for (const [productId, data] of Object.entries(ra.state.productsFull))
+    {
+        for (const category of categories)
+        {
+            if(data.category ===  category)
+            {
+                out[productId] = data;
+            }
+        }
+    }
+    ra.state.products = out;
+}
+
+ra.selectCategory = (category) =>
+{
+    console.log('Selected Category: '+category);
+    if (ra.state.filter.categories.includes(category))
+    {
+        if(ra.state.filter.categories.length <= 1)
+        {
+            // Dont allow deselecting the last one
+            ra.showModal('Must have at least one category selected! Select another category before deselecting this one!','Nope');
+            return;
+        }
+        const index = ra.state.filter.categories.indexOf(category);
+        if (index !== -1) {
+            ra.state.filter.categories.splice(index, 1);
+        }
+        if(ra.state.filter.categories.length <= 0)
+        {
+            // Reset categories
+            //ra.state.filter.categories = [...ra.state.categories];
+        }
+    }
+    else{
+        ra.state.filter.categories.push(category);
+    }
+    render.updateCategories(ra.state);
+    ra.filterProducts();
+    render.drawProducts(ra.state);
+}
+
 ra.showModal = (text="Hello",title="Alert") =>
 {
     console.log('Showing Modal');
@@ -82,26 +152,31 @@ ra.closeModal = () =>
 
 ra.refresh = async (alert=false) =>
 {
-  console.log('Refresh!');
-  
-  render.btnRefreshState(false);
+    console.log('Refresh!');
+    
+    render.btnRefreshState(false);
 
-  ra.state.motd = await request.motd();
-  ra.state.products = await request.products();
+    ra.state.motd = await request.motd();
+    ra.state.productsFull = await request.products();
+    ra.buildCategories();
+    render.drawCategories(ra.state);
+    render.updateCategories(ra.state);
+    ra.filterProducts();
 
-  // Must check local versions after remote
-  // because we need to know which products to look for
-  ra.updatePaths();
-  ra.state.local = ipc.checkLocalVersions(ra.state);
-  
-  render.updateMOTD(ra.state);
-  render.drawProducts(ra.state);
+    // Must check local versions after remote
+    // because we need to know which products to look for
+    ra.updatePaths();
+    ra.state.local = ipc.checkLocalVersions(ra.state);
+    
+    render.updateMOTD(ra.state);
+    render.updateServerURL(ra.state);
+    render.drawProducts(ra.state);
 
-  render.btnRefreshState(true);
-  if(alert)
-  {
-    ra.showModal('All data has been refreshed!', 'Refreshed');
-  }
+    render.btnRefreshState(true);
+    if(alert)
+    {
+        ra.showModal('All data has been refreshed!', 'Refreshed');
+    }
 }
 ra.refresh();
 
