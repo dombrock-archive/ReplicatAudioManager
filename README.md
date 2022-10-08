@@ -2,7 +2,7 @@
 
 Replicloud is a tool for downloading and updating free and opensource audio tools.
 
-![screenshot](https://github.com/replicat-audio/Replicloud/blob/master/screenshot.png?raw=true)
+![screenshot](https://github.com/replicat-audio/Replicloud/blob/master/demogif1.gif?raw=true)
 
 Features:
 * Downloads come directly from the Replicloud server and are verified for integrity.
@@ -15,6 +15,8 @@ Currently Included Tools:
 * Helm (Standalone and VST)
 * BlackBird (Standalone and VST)
 * More tools to come
+
+![screenshot](https://github.com/replicat-audio/Replicloud/blob/master/demogif2.gif?raw=true)
 
 ## Front-end
 ### Run in dev mode
