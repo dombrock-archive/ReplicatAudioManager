@@ -4,17 +4,24 @@ const port = 3000;
 
 const path = require('path');
 
+const analytics = require('./analytics');
+
 const products = require('./products.json');
 
+const logger = function (req, res, next)
+{
+    analytics.log(req);
+    next();
+}
+app.use(logger);
 
 app.use(express.static('public'));
 
-
 app.get('/download', (req, res) => {
-    console.log('/download');
     const fs = require('fs');
     const target = req.query.target;
     const path =__dirname+'/dist/'+target;
+    analytics.download(req, target);
     console.log('Download Requested: '+target);
     if(fs.existsSync(path))
     {
@@ -29,12 +36,10 @@ app.get('/download', (req, res) => {
 });
 
 app.get('/motd', (req, res) => {
-    console.log('/motd');
     res.send('This is the message of the day!');
 });
 
 app.get('/currentVersion', (req, res) => {
-    console.log('/currentVersion');
     const out = {
         version: '0.3.5',
         md5: 'df9ffadfa2618e65322816818e3bbee0'
@@ -43,25 +48,6 @@ app.get('/currentVersion', (req, res) => {
 });
 
 app.get('/products', (req, res) => {
-    console.log('/products');
-    // const category = req.query.category;
-    // const categoryJSON = JSON.parse(category);
-    // if(!categoryJSON)
-    // {
-    //     console.log('Cant parse category JSON');
-    //     console.log(category);
-    //     return;
-    // }
-
-    // let out = {};
-    // for (const [productId, data] of Object.entries(products))
-    // {
-    //     if(data.category == 'standalone')
-    //     {
-    //         out[productId] = data;
-    //     }
-    // }
-    // res.json(out);
     res.json(products);
 });
 

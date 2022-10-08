@@ -1,7 +1,7 @@
 {
-  "name": "Replicloud",
-  "productName": "Replicloud",
-  "description": "Replicloud",
+  "name": "ReplicatAudioManager",
+  "productName": "ReplicatAudioManager",
+  "description": "ReplicatAudioManager",
   "version": "0.1.2",
   "private": true,
   "author": "Replicat Audio",
@@ -9,7 +9,7 @@
   "homepage": "http://example.com",
   "main": "app/main.js",
   "build": {
-    "appId": "com.example.replicloud",
+    "appId": "com.example.ReplicatAudioManager",
     "files": [
       "app/**/*",
       "config.js",
