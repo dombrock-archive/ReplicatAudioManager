@@ -38,7 +38,7 @@ render.drawProducts = (state)=>
       btnText = 'Install';
     }
     html += '<div class="card">';
-    html += '<img class="product-icon" src="'+serverURL+'/icons/'+productData.icon+'">';
+    html += '<img class="product-icon" src="'+state.serverURL+'/icons/'+productData.icon+'">';
     html += '<div class="card-title">';
     html += productData.name;
     html += '</div>';
@@ -55,7 +55,7 @@ render.drawProducts = (state)=>
     html += '</div>';
     html += '</div>';
     html += '<hr>';
-    html += '<img class="product-ss" src="'+serverURL+'/screenshots/'+productData.screenshots[0]+'">';
+    html += '<img class="product-ss" src="'+state.serverURL+'/screenshots/'+productData.screenshots[0]+'">';
     html += '<br>';
     html += productData.description;
     html += '<br><br>';
@@ -102,8 +102,7 @@ render.updateCategories = (state) =>
 
 render.updateServerURL = (state)=>
 {
-  console.log('USURL');
-  document.getElementById("serverURL").innerHTML = serverURL;
+  document.getElementById("serverURL").innerHTML = state.serverURL;
 }
 
 render.updateMOTD = (state)=>

@@ -1,8 +1,20 @@
 const express = require('express');
 const app = express();
-const port = 3000;
 
-const path = require('path');
+let port = 3000;
+if(process.argv[2])
+{
+    const safePort = parseInt(process.argv[2]);
+    if(isNaN(safePort)==false)
+    {
+        port = safePort;
+    }
+    else
+    {
+        console.log('Port must be an integer! Got: '+process.argv[2]);
+        console.log('Port will default to '+port);
+    }
+}
 
 const analytics = require('./analytics');
 

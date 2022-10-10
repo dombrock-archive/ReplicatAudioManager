@@ -1,9 +1,9 @@
-
 console.log('Connected to: '+serverURL);
 
 const ra = {};
 
 ra.state = {
+    serverURL: serverURL,//Default from config
     motd: {},
     products:{},
     productsFull:{},
@@ -25,6 +25,12 @@ ra.state = {
     },
     locked: false
 };
+
+ra.setServerURL = (newServerURL) => 
+{
+    ra.state.serverURL = newServerURL;
+    console.log('Set server URL: '+newServerURL);
+}
 
 ra.updateProduct = (productId) =>
 {
@@ -156,8 +162,8 @@ ra.refresh = async (alert=false) =>
     
     render.btnRefreshState(false);
 
-    ra.state.motd = await request.motd();
-    ra.state.productsFull = await request.products();
+    ra.state.motd = await request.motd(ra.state);
+    ra.state.productsFull = await request.products(ra.state);
     ra.buildCategories();
     render.drawCategories(ra.state);
     render.updateCategories(ra.state);
