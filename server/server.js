@@ -1,6 +1,8 @@
 const express = require('express');
 const app = express();
 
+const db = require('./db');
+
 let port = 3000;
 if(process.argv[2])
 {
@@ -29,6 +31,8 @@ app.use(logger);
 
 app.use(express.static('public'));
 
+app.set('json spaces', 2);//JSON formatting
+
 app.get('/download', (req, res) => {
     const fs = require('fs');
     const target = req.query.target;
@@ -45,6 +49,16 @@ app.get('/download', (req, res) => {
         console.log('Target can not be found!');
         res.sendStatus(404);
     }
+});
+
+app.get('/downloadAnalytics', async (req, res) => {
+    const json = await db.Downloads.findAll();
+    res.json(json);
+});
+
+app.get('/logs', async (req, res) => {
+    const json = await db.Logs.findAll();
+    res.json(json);
 });
 
 app.get('/motd', (req, res) => {
