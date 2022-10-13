@@ -3,7 +3,7 @@ const app = express();
 
 const db = require('./db');
 
-let port = 3000;
+let port = 1337;
 if(process.argv[2])
 {
     const safePort = parseInt(process.argv[2]);
